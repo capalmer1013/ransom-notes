@@ -50,7 +50,7 @@ class BaseMixin(object):
         return cls.query.all()
 
 class Game(BaseMixin, db.Model):
-    __tablename__ = "games"
+    __tablename__ = "game"
     state = db.Column(db.String, nullable=False, default=GAME_STATES.PREGAME)
     prompt_id = db.Column(db.Integer, db.ForeignKey("prompt.id"))
     
@@ -60,7 +60,7 @@ class Game(BaseMixin, db.Model):
         game.deleteOne()
 
 class Player(BaseMixin, db.Model):
-    __tablename__ = "players"
+    __tablename__ = "player"
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
     response = db.Column(db.String, nullable=True)
     name = db.Column(db.String, nullable=False, default="NoName")
@@ -71,7 +71,7 @@ class Player(BaseMixin, db.Model):
         user.deleteOne()
 
 class Word(BaseMixin, db.Model):
-    __tablename__ = "words"
+    __tablename__ = "word"
     text = db.Column(db.String, nullable=False)
 
     @staticmethod
@@ -79,13 +79,13 @@ class Word(BaseMixin, db.Model):
         user = Word.query.filter_by(id=id).first()
         user.deleteOne()
 
-ref_player_words = db.Table('ref_player_words',
-    db.Column('player_id', db.Integer, db.ForeignKey('player.id'), primary_key=True),
-    db.Column('word_id', db.Integer, db.ForeignKey('word.id'), primary_key=True)
-)
+class Ref_Player_Words(BaseMixin, db.Model):
+    __tablename__ = "ref_player_word"
+    player_id = db.Column('player_id', db.Integer, db.ForeignKey('player.id'), primary_key=True)
+    word_id = db.Column('word_id', db.Integer, db.ForeignKey('word.id'), primary_key=True)
 
 class Prompt(BaseMixin, db.Model):
-    __tablename__ = "prompts"
+    __tablename__ = "prompt"
     text = db.Column(db.String, nullable=True)
     
     @staticmethod
