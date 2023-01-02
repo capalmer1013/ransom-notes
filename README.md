@@ -23,15 +23,15 @@ create game
 request:
 ```json
 {
-    player_name: "Don Johnson",
+    "player_name": "Don Johnson",
 }
 ```
 
 response:
 ```json
 {
-    game_id: "1234",
-    player_id: "3456",
+    "game_id": "1234",
+    "player_id": "3456",
 
 }
 ```
@@ -41,17 +41,17 @@ join game
 request:
 ```json
 {
-    player_name: "Don Johnson",
+    "player_name": "Don Johnson",
 }
 ```
 response:
 ```json
 {
-    player_id: "4567",
-    game_state: "pregame",
-    players: ["Walter Sobcheck", "Don Johnson"],
-    prompt: "Setup here",
-    responses: ["punchline here"]
+    "player_id": "4567",
+    "game_state": "pregame",
+    "players": ["Walter Sobcheck", "Don Johnson"],
+    "prompt": "Setup here",
+    "responses": ["punchline here"]
 }
 ```
 
@@ -64,11 +64,11 @@ long-poll current game
 response:
 ```json
 {
-    game_state: "selection",
-    players: ["Walter Sobcheck", "Don Johnson", "Ricky Bobby"],
-    prompt: "Setup here",
-    responses: ["punchline here"],
-    words: ["this", "is", "full", "of", "words"]
+    "game_state": "selection",
+    "players": ["Walter Sobcheck", "Don Johnson", "Ricky Bobby"],
+    "prompt": "Setup here",
+    "responses": ["punchline here"],
+    "words": ["this", "is", "full", "of", "words"]
 }
 ```
 
@@ -78,13 +78,13 @@ play card
 request:
 ```json
 {
-    response: "punchline here",
+    "response": "punchline here",
 }
 ```
 response:
 ```json
 {
-    responses: ["punchline here"],
+    "responses": ["punchline here"],
 
 }
 ```
@@ -94,14 +94,14 @@ pick card
 request:
 ```json
 {
-    response: "punchline here",
+    "response": "punchline here",
 }
 ```
 response:
 ```json
 {
-    players: [],
-    prompt: "",
+    "players": [],
+    "prompt": "",
 
 }
 ```
