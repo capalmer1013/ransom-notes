@@ -7,6 +7,10 @@ from sqlalchemy.dialects import postgresql
 
 db = SQLAlchemy()
 
+class GAME_STATES:
+    PREGAME = "pregame"
+    AWAITING = "awaiting"
+    SELECTION = "selection"
 
 class BaseMixin(object):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +52,112 @@ class BaseMixin(object):
 class User_Account(BaseMixin, db.Model):
     __tablename__ = "user_account"
     username = db.Column(db.String, nullable=False)
+    test = db.Column(db.String, nullable=True)
+
+    @staticmethod
+    def createUser(username):
+        result = User_Account(username=username)
+        db.session.add(result)
+        db.session.commit()
+        return result
+
+    @staticmethod
+    def update(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        for key in kw:
+            if key != "id":
+                setattr(user, key, kw[key])
+        db.session.commit()
+    
+    @staticmethod
+    def delete(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        user.deleteOne()
+
+
+class Game(BaseMixin, db.Model):
+    __tablename__ = "games"
+    state = db.Column(db.String, nullable=False, default=GAME_STATES.PREGAME)
+    prompt_id = db.Column(db.Integer, db.ForeignKey("prompt.id"))
+
+    @staticmethod
+    def createUser(username):
+        result = User_Account(username=username)
+        db.session.add(result)
+        db.session.commit()
+        return result
+
+    @staticmethod
+    def update(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        for key in kw:
+            if key != "id":
+                setattr(user, key, kw[key])
+        db.session.commit()
+    
+    @staticmethod
+    def delete(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        user.deleteOne()
+
+class Player(BaseMixin, db.Model):
+    __tablename__ = "players"
+    game_id = db.Column(db.String, nullable=False)
+    test = db.Column(db.String, nullable=True)
+
+    @staticmethod
+    def createUser(username):
+        result = User_Account(username=username)
+        db.session.add(result)
+        db.session.commit()
+        return result
+
+    @staticmethod
+    def update(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        for key in kw:
+            if key != "id":
+                setattr(user, key, kw[key])
+        db.session.commit()
+    
+    @staticmethod
+    def delete(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        user.deleteOne()
+
+class Word(BaseMixin, db.Model):
+    __tablename__ = "words"
+    game_id = db.Column(db.String, nullable=False)
+    test = db.Column(db.String, nullable=True)
+
+    @staticmethod
+    def createUser(username):
+        result = User_Account(username=username)
+        db.session.add(result)
+        db.session.commit()
+        return result
+
+    @staticmethod
+    def update(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        for key in kw:
+            if key != "id":
+                setattr(user, key, kw[key])
+        db.session.commit()
+    
+    @staticmethod
+    def delete(id, **kw):
+        user = User_Account.query.filter_by(id=id).first()
+        user.deleteOne()
+
+tags = db.Table('ref_player_words',
+    db.Column('player_id', db.Integer, db.ForeignKey('player.id'), primary_key=True),
+    db.Column('word_id', db.Integer, db.ForeignKey('word.id'), primary_key=True)
+)
+
+class Prompt(BaseMixin, db.Model):
+    __tablename__ = "prompts"
+    game_id = db.Column(db.String, nullable=False)
     test = db.Column(db.String, nullable=True)
 
     @staticmethod
