@@ -1,5 +1,6 @@
 # Ransom notes
 ransom notes game backend
+
 cli frontend
 
 # game states
@@ -22,7 +23,7 @@ create game
 request:
 ```json
 {
-    "player_name": "Don Johnson",
+    player_name: "Don Johnson",
 }
 ```
 
@@ -30,54 +31,72 @@ response:
 ```json
 {
     game_id: "1234",
+    player_id: "3456",
 
 }
 ```
-## PATCH /games/:id
+## POST /games/:id/players
 join game
 
 request:
 ```json
 {
-    "player_name": "Don Johnson",
+    player_name: "Don Johnson",
 }
 ```
 response:
 ```json
 {
-    game_state: "awaiting",
-    players: ["Walter Sobcheck"],
-    prompt: "",
-
+    player_id: "4567",
+    game_state: "pregame",
+    players: ["Walter Sobcheck", "Don Johnson"],
+    prompt: "Setup here",
+    responses: ["punchline here"]
 }
 ```
 
-## GET /games/:id
+## GET /games/:id?player_id=4567
 long-poll current game
+- player_id will return available words for that player
+- player_id acts as kinda auth prevent directly sharing all words with everyone
+
 
 response:
 ```json
 {
-    players: [],
-    prompt: "",
-
+    game_state: "selection",
+    players: ["Walter Sobcheck", "Don Johnson", "Ricky Bobby"],
+    prompt: "Setup here",
+    responses: ["punchline here"],
+    words: ["this", "is", "full", "of", "words"]
 }
 ```
 
 ## POST /games/:id/cards
 play card
 
+request:
+```json
+{
+    response: "punchline here",
+}
+```
 response:
 ```json
 {
-    players: [],
-    prompt: "",
+    responses: ["punchline here"],
 
 }
 ```
 ## POST /games/:id/cards/winner
 pick card
 
+request:
+```json
+{
+    response: "punchline here",
+}
+```
 response:
 ```json
 {
