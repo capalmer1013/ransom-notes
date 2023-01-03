@@ -12,8 +12,6 @@ user_fields = api.model(
 
 @api.route("/games")
 class Games(Resource):
-    # @api.doc(description="Get all Users")
-    # @api.marshal_with(user_fields, as_list=True)
     def get(self):
         return [x.__dict__ for x in Game.getAll()]
 
@@ -46,7 +44,7 @@ class Players(Resource):
             "responses": [x.response for x in Player.query.filter_by(game_id=game_id)]
         }
 
-@api.route("/games/<gameID>")
+@api.route("/games/<game_id>")
 class Users(Resource):
     @api.doc(description="Get all Users")
     @api.marshal_with(user_fields, as_list=True)
