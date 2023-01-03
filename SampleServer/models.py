@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from sqlalchemy.sql import func
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import joinedload
+
 
 db = SQLAlchemy()
 
@@ -53,11 +55,16 @@ class Game(BaseMixin, db.Model):
     __tablename__ = "game"
     state = db.Column(db.String, nullable=False, default=GAME_STATES.PREGAME)
     prompt_id = db.Column(db.Integer, db.ForeignKey("prompt.id"))
-    
+    players = db.relationship('Player', backref='game')
+
     @staticmethod
     def delete(id, **kw):
         game = Game.query.filter_by(id=id).first()
         game.deleteOne()
+    
+    @classmethod
+    def getOne(cls, id):
+        return cls.query.filter_by(id=id).options(joinedload(Game.players)).first()
 
 class Player(BaseMixin, db.Model):
     __tablename__ = "player"

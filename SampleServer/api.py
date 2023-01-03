@@ -11,34 +11,40 @@ user_fields = api.model(
 )
 
 @api.route("/games")
-class Users(Resource):
-    @api.doc(description="Get all Users")
-    @api.marshal_with(user_fields, as_list=True)
+class Games(Resource):
+    # @api.doc(description="Get all Users")
+    # @api.marshal_with(user_fields, as_list=True)
     def get(self):
         return [x.__dict__ for x in Game.getAll()]
 
-    @api.doc(description="Create User")
+    @api.doc(description="Create New Game")
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("username", required=True, type=str)
+        parser.add_argument("player_name", required=True, type=str)
         args = parser.parse_args()
-        Game.create(**args)
-        return {}
+        game = Game.create()
+        player = Player.create()
+        return {
+            "game_id": game.id,
+            "player_id": player.id
+        }
 
-@api.route("/games/<gameID>/players")
-class Users(Resource):
-    @api.doc(description="Get all Users")
-    @api.marshal_with(user_fields, as_list=True)
-    def get(self):
-        return [x.__dict__ for x in Game.getAll()]
-
-    @api.doc(description="Create User")
-    def post(self):
+@api.route("/games/<game_id>/players")
+class Players(Resource):
+    @api.doc(description="Create User in game (join game)")
+    def post(self, game_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("username", required=True, type=str)
+        parser.add_argument("player_name", required=True, type=str)
         args = parser.parse_args()
-        Game.create(**args)
-        return {}
+        player = Player.create(game_id=game_id)
+        game = Game.getOne(game_id)
+        return {
+            "player_id": player.id,
+            "game_state": game.state,
+            "players": [x.id for x in game.players],
+            "prompt": Prompt.getOne(game.prompt_id),
+            "responses": [x.response for x in Player.query.filter_by(game_id=game_id)]
+        }
 
 @api.route("/games/<gameID>")
 class Users(Resource):

@@ -32,7 +32,6 @@ response:
 {
     "game_id": "1234",
     "player_id": "3456",
-
 }
 ```
 ## POST /games/:id/players
@@ -85,7 +84,6 @@ response:
 ```json
 {
     "responses": ["punchline here"],
-
 }
 ```
 ## POST /games/:id/cards/winner
@@ -102,7 +100,6 @@ response:
 {
     "players": [],
     "prompt": "",
-
 }
 ```
 
