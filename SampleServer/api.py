@@ -46,18 +46,15 @@ class Players(Resource):
 
 @api.route("/games/<game_id>")
 class Users(Resource):
-    @api.doc(description="Get all Users")
-    @api.marshal_with(user_fields, as_list=True)
-    def get(self):
+    @api.doc(description="Poll Game")
+    def get(self, game_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('player_id', type=int, help='player_id for game')
+        args = parser.parse_args()
+        game = Games.getOne(game_id)
+        player = Player.getOne(args.get("player_id", None))
         return [x.__dict__ for x in Game.getAll()]
 
-    @api.doc(description="Create User")
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("username", required=True, type=str)
-        args = parser.parse_args()
-        Game.create(**args)
-        return {}
 
 @api.route("/games/<gameID>/cards")
 class Users(Resource):
