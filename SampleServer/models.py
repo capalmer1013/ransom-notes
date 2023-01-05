@@ -1,7 +1,8 @@
 import uuid
+import random
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
+from sqlalchemy import desc, select
 from sqlalchemy.sql import func
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import joinedload
@@ -15,7 +16,7 @@ class GAME_STATES:
     SELECTION = "selection"
 
 class BaseMixin(object):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, )
     created_at = db.Column(
         db.DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -71,7 +72,20 @@ class Player(BaseMixin, db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
     response = db.Column(db.String, nullable=True)
     name = db.Column(db.String, nullable=False, default="NoName")
+    ref_player_words = db.relationship(
+        "Ref_Player_Words", back_populates="player", cascade="delete"
+    )
     
+    @classmethod
+    def create(cls, **kw):
+        player = cls(**kw)
+        db.session.add(player)
+        db.session.commit()
+        for each in Word.getRandom():
+            Ref_Player_Words.create(player_id=player.id, word_id=each.id)
+        
+        return player
+
     @staticmethod
     def delete(id, **kw):
         user = Player.query.filter_by(id=id).first()
@@ -80,20 +94,35 @@ class Player(BaseMixin, db.Model):
 class Word(BaseMixin, db.Model):
     __tablename__ = "word"
     text = db.Column(db.String, nullable=False)
+    ref_player_words = db.relationship("Ref_Player_Words", back_populates="word", cascade="delete")
+
+    @staticmethod
+    def getRandom(n: int=20):
+        return random.choices(Word.getAll(), k=n)
 
     @staticmethod
     def delete(id, **kw):
         user = Word.query.filter_by(id=id).first()
         user.deleteOne()
 
-class Ref_Player_Words(BaseMixin, db.Model):
+class Ref_Player_Words(db.Model):
     __tablename__ = "ref_player_word"
-    player_id = db.Column('player_id', db.Integer, db.ForeignKey('player.id'), primary_key=True)
-    word_id = db.Column('word_id', db.Integer, db.ForeignKey('word.id'), primary_key=True)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey('word.id'), primary_key=True)
+    player = db.relationship("Player", back_populates="ref_player_words")
+    word = db.relationship("Word", back_populates="ref_player_words")
 
     @staticmethod
     def getByPlayerID(id, **kw):
-        return []
+        return Ref_Player_Words.query.filter_by(player_id=id).options(joinedload(Ref_Player_Words))
+
+    @classmethod
+    def create(cls, **kw):
+        obj = cls(**kw)
+        db.session.add(obj)
+        db.session.commit()
+        return obj
+
 class Prompt(BaseMixin, db.Model):
     __tablename__ = "prompt"
     text = db.Column(db.String, nullable=True)

@@ -58,7 +58,7 @@ class Users(Resource):
             "players": [{"name": x.name, } for x in game.players], 
             "prompt": prompt and prompt.text, 
             "responses": [], 
-            "words": Ref_Player_Words.getByPlayerID(player and player.id)
+            "words": [x.word.text for x in player.ref_player_words]
             }
 
 
