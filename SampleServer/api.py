@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, make_response
 from flask_restx import Resource, Api, reqparse, fields
 
-from .models import Game, Player, Word, Ref_Player_Words, Prompt
+from .models import Game, Player, Word, Ref_Player_Words, Prompt, db
 
 app = Flask(__name__)
 api = Api(app, title="Sample REST api")
@@ -57,25 +57,23 @@ class Users(Resource):
         return {"game_state": game.state, 
             "players": [{"name": x.name, } for x in game.players], 
             "prompt": prompt and prompt.text, 
-            "responses": [], 
+            "responses": [x.response for x in game.players], 
             "words": [x.word.text for x in player.ref_player_words]
             }
 
 
-@api.route("/games/<gameID>/cards")
+@api.route("/games/<game_id>/cards")
 class Users(Resource):
-    @api.doc(description="Get all Users")
-    @api.marshal_with(user_fields, as_list=True)
-    def get(self):
-        return [x.__dict__ for x in Game.getAll()]
-
-    @api.doc(description="Create User")
-    def post(self):
+    @api.doc(description="Play Card")
+    def post(self, game_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("username", required=True, type=str)
+        parser.add_argument("player_id", required=True, type=int)
+        parser.add_argument("response", required=True, type=str)
         args = parser.parse_args()
-        Game.create(**args)
-        return {}
+        player = Player.getOne(args['player_id'])
+        player.response = args["response"]
+        db.session.commit()
+        return {"player_id": args['player_id'], "response": args['response']}
 
 @api.route("/games/<gameID>/cards/winner")
 class Users(Resource):

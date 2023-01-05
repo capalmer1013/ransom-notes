@@ -77,12 +77,14 @@ play card
 request:
 ```json
 {
+    "player_id": 1234,
     "response": "punchline here",
 }
 ```
 response:
 ```json
 {
+    "player_id": 1234,
     "responses": ["punchline here"],
 }
 ```
