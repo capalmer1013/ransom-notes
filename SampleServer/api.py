@@ -45,7 +45,7 @@ class Players(Resource):
         }
 
 @api.route("/games/<game_id>")
-class Users(Resource):
+class GamePoll(Resource):
     @api.doc(description="Poll Game")
     def get(self, game_id):
         parser = reqparse.RequestParser()
@@ -63,7 +63,7 @@ class Users(Resource):
 
 
 @api.route("/games/<game_id>/cards")
-class Users(Resource):
+class PlayCard(Resource):
     @api.doc(description="Play Card")
     def post(self, game_id):
         parser = reqparse.RequestParser()
@@ -76,16 +76,11 @@ class Users(Resource):
         return {"player_id": args['player_id'], "response": args['response']}
 
 @api.route("/games/<gameID>/cards/winner")
-class Users(Resource):
-    @api.doc(description="Get all Users")
-    @api.marshal_with(user_fields, as_list=True)
-    def get(self):
-        return [x.__dict__ for x in Game.getAll()]
-
-    @api.doc(description="Create User")
+class PickWinner(Resource):
+    @api.doc(description="Pick Card")
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("username", required=True, type=str)
+        parser.add_argument("response", required=True, type=str)
         args = parser.parse_args()
-        Game.create(**args)
+        # idk how to handle winning here
         return {}
