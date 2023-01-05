@@ -11,6 +11,7 @@ gunicorn = "*"
 install = "*"
 flask-restx = "*"
 psycopg2-binary = "*"
+typer = {extras = ["all"], version = "*"}
 
 [dev-packages]
 

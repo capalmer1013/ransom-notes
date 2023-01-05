@@ -91,6 +91,9 @@ class Ref_Player_Words(BaseMixin, db.Model):
     player_id = db.Column('player_id', db.Integer, db.ForeignKey('player.id'), primary_key=True)
     word_id = db.Column('word_id', db.Integer, db.ForeignKey('word.id'), primary_key=True)
 
+    @staticmethod
+    def getByPlayerID(id, **kw):
+        return []
 class Prompt(BaseMixin, db.Model):
     __tablename__ = "prompt"
     text = db.Column(db.String, nullable=True)

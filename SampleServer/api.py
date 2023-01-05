@@ -21,7 +21,7 @@ class Games(Resource):
         parser.add_argument("player_name", required=True, type=str)
         args = parser.parse_args()
         game = Game.create()
-        player = Player.create()
+        player = Player.create(game_id=game.id, name=args['player_name'])
         return {
             "game_id": game.id,
             "player_id": player.id
@@ -34,7 +34,7 @@ class Players(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("player_name", required=True, type=str)
         args = parser.parse_args()
-        player = Player.create(game_id=game_id)
+        player = Player.create(game_id=game_id, name=args['player_name'])
         game = Game.getOne(game_id)
         return {
             "player_id": player.id,
@@ -51,9 +51,15 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('player_id', type=int, help='player_id for game')
         args = parser.parse_args()
-        game = Games.getOne(game_id)
+        game = Game.getOne(game_id)
         player = Player.getOne(args.get("player_id", None))
-        return [x.__dict__ for x in Game.getAll()]
+        prompt = Prompt.getOne(game.prompt_id)
+        return {"game_state": game.state, 
+            "players": [{"name": x.name, } for x in game.players], 
+            "prompt": prompt and prompt.text, 
+            "responses": [], 
+            "words": Ref_Player_Words.getByPlayerID(player and player.id)
+            }
 
 
 @api.route("/games/<gameID>/cards")
